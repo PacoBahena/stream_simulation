@@ -381,29 +381,14 @@ def check_is_in_db():
 @app.route('/check_unique/',methods=['POST'])
 def check_unique():
 
-	global pos_connection
-	#Si la conexión murió, vuelve a abrirla.
-	try:
-		cur = pos_connection.cursor()
-	except:
-	 	pos_connection = pg.connect(dbname='flujo', user='usuario_flujo', host="pos1.cjp3gx7nxjsk.us-east-1.rds.amazonaws.com", password='flujos',connect_timeout=8)
-	 	cur = pos_connection.cursor()
 
 	records = request.data.get('records')
 
-	for record in records:
 
-		cur.execute("insert into flujo (registro) values (%s)",(record,))
-
-	pos_connection.commit()
-
-	cur.execute("select count(distinct(registro)) from flujo")
-	unicas_base = cur.fetchone()[0]
-	unicas_hll = hloglog.count()
+	unicas_hll = hloglog.count(records)
 
 	results = {
 
-		'unicas_base': unicas_base,
 		'unicas hloglog': unicas_hll
 
 	}
