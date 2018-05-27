@@ -288,14 +288,12 @@ def check_time_window_sample_db():
 
 	tabla['duracion'] = tabla['last'] - tabla['first']
 	tabla = tabla.loc[tabla['duracion'] >0]
-	print(tabla)
 	tabla_prom = tabla.groupby('mac_1')['duracion'].mean().reset_index()
 	duracion_promedio_canasta = int(tabla_prom.duracion.mean())
 
 	
 	results = {
 
-		"db_duracion_promedio" : int(duracion_promedio),
 		"canasta_duracion_promedio" : duracion_promedio_canasta,
 		"observaciones_en_canasta": df_canasta.shape[0]
 	}
