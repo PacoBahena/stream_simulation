@@ -65,8 +65,8 @@ def clean_db(num_hashes,big_prime):
 
 	return results 
 
-@app.route('/clean_bucket/<int:num_buckets>/<int:buckets_a_tomar>')
-def clean_bucket(num_hashes,buckets):
+@app.route('/clean_bucket/<int:numero_buckets>/<int:buckets_para_tomar>/')
+def clean_bucket(numero_buckets,buckets_para_tomar):
 	###
 	#Limpia la canasta y define el numero de canastas a usar, así como el número 
 	# de canastas a samplear
@@ -76,8 +76,8 @@ def clean_bucket(num_hashes,buckets):
 	global canasta
 	global num_buckets
 	global buckets_a_tomar
-	num_buckets = num_buckets
-	buckets_a_tomar = buckets_a_tomar
+	num_buckets = numero_buckets
+	buckets_a_tomar = buckets_para_tomar
 
 	canasta = cubeta()
 	canasta.values = []
