@@ -281,13 +281,14 @@ def check_time_window_sample_db():
 		return results
 	df_canasta.columns = ['mac','tiempo']
 	tabla_prom_max = df_canasta.groupby('mac')['tiempo'].max().reset_index()
-	tabla_prom_max.columns = ['mac_1','first']
+	tabla_prom_max.columns = ['mac_1','last']
 	tabla_prom_min = df_canasta.groupby('mac')['tiempo'].min().reset_index()
-	tabla_prom_min.columns = ['mac_2','last']
+	tabla_prom_min.columns = ['mac_2','first']
 	tabla = tabla_prom_max.merge(tabla_prom_min,how='inner',left_on='mac_1',right_on='mac_2')
 
 	tabla['duracion'] = tabla['last'] - tabla['first']
 	tabla = tabla.loc[tabla['duracion'] >0]
+	print(tabla)
 	tabla_prom = tabla.groupby('mac_1')['duracion'].mean().reset_index()
 	duracion_promedio_canasta = int(tabla_prom.duracion.mean())
 
