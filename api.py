@@ -383,6 +383,7 @@ def check_is_in_db():
 
 	for record in records:
 
+		print(record)
 		cur.execute("""select checkin from checkin where checkin=%s""",(record[0],))
 		if cur.fetchone() is None:
 			estan += 0
