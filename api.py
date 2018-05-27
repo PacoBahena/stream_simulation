@@ -20,7 +20,6 @@ filtro_bloom = bloom_filter(salts,big_prime)
 
 canasta = cubeta()
 #genera hyperloglog
-hloglog = hyperloglog(5)
 ###
 
 unique_inserts_counter = 0
@@ -382,9 +381,10 @@ def check_is_in_db():
 def check_unique():
 
 
-	records = request.data.get('recorsds')
+	records = request.data.get('records')
+	long_bit = request.data.get('bit_long')
 
-
+	hloglog = hyperloglog(long_bit)
 	unicas_hll = hloglog.count(records)
 
 	results = {

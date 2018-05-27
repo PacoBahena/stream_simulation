@@ -3,6 +3,7 @@ from random import choice,randint,seed
 import numpy as np
 from pyblake2 import blake2b
 import hashlib
+import pandas as pd
 
 def hash_family(semilla=12345,k=100):
 	"""
@@ -32,7 +33,7 @@ def hash_generator(elemento,salts,modulo_primo=526717,hyperloglog=False):
     elemento = elemento.encode() 
     
     if hyperloglog == True:
-    	temp = hashlib.sha1(elemento.hexdigest())
+    	temp = hashlib.sha1(elemento).hexdigest()
     	hashes = format(int(temp,16) , '08b')
 
     else:
@@ -91,11 +92,11 @@ class hyperloglog:
    def count(self, data):
        mx = []
        for el in data:
-           binary = hash_generator(el, salts=salts, hyperloglog =True)
+           binary = hash_generator(el, salts=0, hyperloglog =True)
            lead = binary[1:self.lead_bits]
            tail = binary[self.lead_bits:]
            t = list(tail)
-           mx.insert(i,[lead, t.index(max(t))+1])
+           mx.append([lead, t.index(max(t))+1])
        #lo hacemos datafrfame.
        mx = pd.DataFrame(mx)
        mx.columns = ['cubeta', 'tailmax']
