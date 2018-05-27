@@ -65,7 +65,7 @@ def clean_db(num_hashes,big_prime):
 
 	return results 
 
-@app.route('/clean_bucket/num_buckets/<int:buckets_a_tomar>')
+@app.route('/clean_bucket/<int:num_buckets>/<int:buckets_a_tomar>')
 def clean_bucket(num_hashes,buckets):
 	###
 	#Limpia la canasta y define el numero de canastas a usar, así como el número 
