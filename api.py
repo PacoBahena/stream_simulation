@@ -382,14 +382,14 @@ def check_is_in_db():
 def check_unique():
 
 
-	records = request.data.get('records')
+	records = request.data.get('recorsds')
 
 
 	unicas_hll = hloglog.count(records)
 
 	results = {
 
-		'unicas hloglog': unicas_hll
+		'unicas_hloglog': unicas_hll
 
 	}
 
