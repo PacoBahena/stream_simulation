@@ -25,7 +25,7 @@ hloglog = hyperloglog(5)
 
 unique_inserts_counter = 0
 num_buckets = 10
-buckets_a_tomar = 5
+buckets_a_tomar = 2
 
 ###
 #Borra lo que tenga.
@@ -34,7 +34,6 @@ pos_connection.set_session(autocommit=True)
 cur = pos_connection.cursor()
 cur.execute("TRUNCATE checkin")
 cur.execute("TRUNCATE checkin_bloom")
-cur.execute("TRUNCATE window_flujo")
 pos_connection.commit()
 cur.close()
 
@@ -48,7 +47,6 @@ def clean_db(num_hashes,big_prime):
 	cur = pg_connection.cursor()
 	cur.execute("TRUNCATE checkin")
 	cur.execute("TRUNCATE checkin_bloom")
-	cur.execute("TRUNCATE window_flujo")
 	pg_connection.commit()
 	cur.close()
 	pg_connection.close()
@@ -70,7 +68,8 @@ def clean_db(num_hashes,big_prime):
 @app.route('/clean_bucket/num_buckets/<int:buckets_a_tomar>')
 def clean_bucket(num_hashes,buckets):
 	###
-	#Sets buckets
+	#Limpia la canasta y define el numero de canastas a usar, así como el número 
+	# de canastas a samplear
 	###
 
 
@@ -245,18 +244,10 @@ def insert_elements_on_window_db():
 	global canasta
 	global num_buckets
 	global buckets_a_tomar
-	#Si la conexión murió, vuelve a abrirla.
-	try:
-		cur = pos_connection.cursor()
-	except:
-	 	pos_connection = pg.connect(dbname='flujo', user='usuario_flujo', host="pos1.cjp3gx7nxjsk.us-east-1.rds.amazonaws.com", password='flujos',connect_timeout=8)
-	 	cur = pos_connection.cursor()
 	
 	#inserta los records
 	for record in records:
 	
-		cur.execute("insert into window_flujo (mac,ts) values (%s,%s)",(record[0],record[1]))
-		pos_connection.commit()
 		insertados +=1
 
 		cubetita = hash_bucket(record[0],num_buckets)
@@ -264,11 +255,7 @@ def insert_elements_on_window_db():
 		if  cubetita < buckets_a_tomar:
 			canasta.add_element(record)
 		
-	cur.close()
-
-
 	###si cae en cubeta 1, guardar record.
-
 	
 	results = {
 
@@ -287,23 +274,8 @@ def check_time_window_sample_db():
 
 	global pos_connection
 	global canasta
-	#Si la conexión murió, vuelve a abrirla.
-	# try:
-	# 	cur = pos_connection.cursor()
-	# except:
-	#  	pos_connection = pg.connect(dbname='flujo', user='usuario_flujo', host="pos1.cjp3gx7nxjsk.us-east-1.rds.amazonaws.com", password='flujos',connect_timeout=8)
-	cur = pos_connection.cursor()
 	
-	query = """select AVG(duracion) from (select t.mac,t.first - t.last as duracion from
-	 			(select mac,MAX(ts) as first,MIN(ts) as last from window_flujo group by mac) as t) as e"""
-
-	cur.execute(query)
-	duracion_promedio = cur.fetchone()[0]
-	cur.close()
-	
-	print(canasta.values)
 	df_canasta = pd.DataFrame(canasta.values)
-	print(df_canasta.shape)
 	if df_canasta.empty:
 		results = {"mensaje":"canasta esta vacía."}
 		return results
