@@ -287,6 +287,7 @@ def check_time_window_sample_db():
 	tabla = tabla_prom_max.merge(tabla_prom_min,how='inner',left_on='mac_1',right_on='mac_2')
 
 	tabla['duracion'] = tabla['last'] - tabla['first']
+	tabla = tabla.loc[tabla['duracion'] >0]
 	tabla_prom = tabla.groupby('mac_1')['duracion'].mean().reset_index()
 	duracion_promedio_canasta = int(tabla_prom.duracion.mean())
 
