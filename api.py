@@ -39,7 +39,7 @@ cur.close()
 @app.route('/limpia_db_bloom/<int:num_hashes>/<int:big_prime>')
 def clean_db(num_hashes,big_prime):
 	###
-	#Truncates tables and restarts bloom filter with <num_hashes> hashes and <big_prime> bit length.
+	#Borra las tablas en la base de datos y reinicializa el filtro de Bloom con el número hashes y el largo de bits dado.
 	###
 
 	pg_connection = pg.connect(dbname='flujo', user='usuario_flujo', host="pos1.cjp3gx7nxjsk.us-east-1.rds.amazonaws.com", password='flujos', connect_timeout=8)
@@ -220,9 +220,6 @@ def insert_elements_on_db():
 	}
 	
 	return results
-
-
-	
 
 @app.route('/insert_elements_db_window/',methods=['POST'])
 def insert_elements_on_window_db():
